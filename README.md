@@ -27,11 +27,11 @@ This repository is designed to bootstrap your scripting process when making mods
 
 ## Instructions
 
-- Install Python 3.7.* (e.g., Python 3.7.12)
-  - You may already have `python3` installed but it must be version 3.7.*! You can check with `python3 -V`.
-- [Symlink](https://www.google.com/search?q=how+to+make+a+symlink) the `python3` executable into your `ts4-modding-workspace` folder as `python3`
-  - *Example:* `ln -s /usr/local/Cellar/python@3.7/3.7.12_1/Frameworks/Python.framework/Versions/3.7/bin/python3.7 /ts4-modding-workspace/python3`
-  - *Tip:* You can confirm the version on the local symlink with `./python3 -V`.
+- Install the latest version of [miniconda](https://docs.conda.io/en/latest/miniconda.html#latest-miniconda-installer-links).
+Don't worry that it is bundled with the latest version of Python, we are specifically using `conda` to manage a virtual
+environment.
+- From the project root, run `conda  env create --file environment.yaml`. This will install the project dependencies as
+well as Python 3.7 in a virtual environment.
 - Edit `./Utilities/settings.py` to point to the corresponding folders on your computer.
   - *Tip:* The included directories are from OSX, yours may vary!
 
