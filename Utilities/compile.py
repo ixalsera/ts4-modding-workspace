@@ -1,11 +1,14 @@
 import getopt
 import os
-import settings
+import shutil
+import config
 import sys
 from zipfile import PyZipFile, ZIP_STORED
 
 _compile_with_injector = False
 _compile_with_settings = False
+
+_helper_directory = os.path.realpath(os.path.join(__file__, '..', '..', 'helpers'))
 
 
 def compile_module(creator, mod, mods_path):
@@ -19,7 +22,7 @@ def compile_module(creator, mod, mods_path):
     global _compile_with_injector
     global _compile_with_settings
 
-    mod_path = os.path.join(settings.interim_mods_dir, mod)
+    mod_path = os.path.join(config.interim_mods_dir, mod)
     fully_qualified_mod_name = creator + '_' + mod
 
     if _compile_with_injector:
@@ -40,14 +43,62 @@ def compile_module(creator, mod, mods_path):
 
 
 def include_injector(mod_path):
-    """ Symlinks the injector script in to the mod directory """
-    os.symlink(os.path.realpath(__file__ + '/../injector.py'), os.path.join(mod_path, 'injector.py'))
+    """ Copies the injector script in to the mod directory """
+    global _helper_directory
+
+    target = os.path.join(mod_path, 'injector.py')
+    if os.path.exists(target):
+        os.unlink(target)
+    shutil.copy(os.path.realpath(os.path.join(_helper_directory, 'injector.py')), target)
 
 
 def include_settings(mod_path):
-    """ Symlinks the settings script and configuration in to the mod directory """
-    os.symlink(os.path.realpath(__file__ + '/../settings.py'), os.path.join(mod_path, 'settings.py'))
-    os.symlink(os.path.realpath(__file__ + '/../config.ini'), os.path.join(mod_path, 'config.ini'))
+    """ Copies the settings script in to the mod directory
+
+    Since the game is unable to load non-Python files from the .ts4script,
+    we need to inject our variables in to our settings script at compile time.
+    """
+    global _helper_directory
+
+    # Check for the existence of the settings file, removing it if it exists
+    target = os.path.join(mod_path, 'settings.py')
+    if os.path.exists(target):
+        os.unlink(target)
+
+    settings_strings = ''
+    # Notice the double quoting of the below strings. This is to perform exact match and
+    # replace to avoid substring matching. I didn't want to deal with regex right now
+    settings_strings_dict = {
+        "'CREATOR'": "'" + config.creator_name + "'",
+        "'MODS_DIR'": "'" + config.mods_dir + "'",
+        "'GAME_DIR'": "'" + config.game_dir + "'",
+        "'DATA_DIR'": "'" + config.data_dir + "'",
+        "'PYTHON_DIR'": "'" + config.python_dir + "'",
+        "'EXTRACTED_ASSETS_DIR'": "'" + config.extracted_assets_dir + "'",
+        "'INTERIM_MODS_DIR'": "'" + config.interim_mods_dir + "'",
+        "'HOTRELOAD_DIR'": "'" + config.hotreload_dir + "'",
+    }
+
+    # Read in the contents of the settings.py helper
+    settings_helper_path = os.path.realpath(os.path.join(_helper_directory, 'settings.py'))
+    settings_helper_handle = open(settings_helper_path, 'r')
+    template_settings = settings_helper_handle.read()
+
+    # Iterate through the settings and replace values
+    for line in template_settings.split('\n'):
+        if line.startswith('#'):
+            # Skip comments
+            continue
+        for find, replace in settings_strings_dict.items():
+            if line.find(find) != -1:
+                settings_strings += line.replace(find, replace) + '\n'
+
+    # Close the file descriptor
+    settings_helper_handle.close()
+
+    target_handle = open(target, 'w')
+    target_handle.write(settings_strings)
+    target_handle.close()
 
 
 def show_help():
@@ -100,7 +151,7 @@ def main(argv):
         show_help()
         sys.exit(2)
     for mod_name in args:
-        compile_module(settings.creator_name, mod_name, settings.mods_dir)
+        compile_module(config.creator_name, mod_name, config.mods_dir)
 
 
 if __name__ == "__main__":
