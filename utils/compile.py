@@ -5,6 +5,7 @@ import config
 import sys
 from zipfile import PyZipFile, ZIP_STORED
 
+_compile_with_get_dir = False
 _compile_with_injector = False
 _compile_with_settings = False
 
@@ -31,6 +32,9 @@ def compile_module(creator, mod, mods_path):
     if _compile_with_settings:
         include_settings(mod_path)
 
+    if _compile_with_get_dir:
+        include_get_dir(mod_path)
+
     mod_folder_copy = os.path.join(mods_path, fully_qualified_mod_name + '.ts4script')
 
     zip_file = PyZipFile(mod_folder_copy, mode='w', compression=ZIP_STORED, allowZip64=True, optimize=2)
@@ -52,6 +56,16 @@ def include_injector(mod_path):
     shutil.copy(os.path.realpath(os.path.join(_helper_directory, 'injector.py')), target)
 
 
+def include_get_dir(mod_path):
+    """ Copies the injector script in to the mod directory """
+    global _helper_directory
+
+    target = os.path.join(mod_path, 'get_dir.py')
+    if os.path.exists(target):
+        os.unlink(target)
+    shutil.copy(os.path.realpath(os.path.join(_helper_directory, 'get_dir.py')), target)
+
+
 def include_settings(mod_path):
     """ Copies the settings script in to the mod directory
 
@@ -67,16 +81,18 @@ def include_settings(mod_path):
 
     settings_strings = ''
     # Notice the double quoting of the below strings. This is to perform exact match and
-    # replace to avoid substring matching. I didn't want to deal with regex right now
+    # replace to avoid substring matching. I didn't want to deal with regex right now.
+    # Also notice the `r` prefix to the substitution value. This ensures that the resultant
+    # string is treated as a literal to prevent escape sequencing with Windows paths
     settings_strings_dict = {
-        "'CREATOR'": "'" + config.creator_name + "'",
-        "'MODS_DIR'": "'" + config.mods_dir + "'",
-        "'GAME_DIR'": "'" + config.game_dir + "'",
-        "'DATA_DIR'": "'" + config.data_dir + "'",
-        "'PYTHON_DIR'": "'" + config.python_dir + "'",
-        "'EXTRACTED_ASSETS_DIR'": "'" + config.extracted_assets_dir + "'",
-        "'INTERIM_MODS_DIR'": "'" + config.interim_mods_dir + "'",
-        "'HOTRELOAD_DIR'": "'" + config.hotreload_dir + "'",
+        "'CREATOR'": "r'" + config.creator_name + "'",
+        "'MODS_DIR'": "r'" + config.mods_dir + "'",
+        "'GAME_DIR'": "r'" + config.game_dir + "'",
+        "'DATA_DIR'": "r'" + config.data_dir + "'",
+        "'PYTHON_DIR'": "r'" + config.python_dir + "'",
+        "'EXTRACTED_ASSETS_DIR'": "r'" + config.extracted_assets_dir + "'",
+        "'INTERIM_MODS_DIR'": "r'" + config.interim_mods_dir + "'",
+        "'HOTRELOAD_DIR'": "r'" + config.hotreload_dir + "'",
     }
 
     # Read in the contents of the settings.py helper
@@ -109,24 +125,27 @@ compile.py [-h|i|s] mod_name
 
 Compiling a module is as simple as running compile.py and providing the name of the mod to compile!
 
-To facilitate easier management of mods, since there are two helpers - injector.py and settings.py -
-if you would like to compile your module with support for these modules, you can use the convenience
-options provided.
+To facilitate easier management of mods, since there are three helpers - get_dir.py, injector.py and
+settings.py - if you would like to compile your module with support for these modules, you can use
+the convenience options provided.
 
 Options:
 
 -h|--help               Display this help text
+-d|--compile-dir        Include the get_dir.py helper when compiling the mod
 -i|--compile-injector   Include the injector.py helper when compiling the mod
 -s|--compile-settings   Include the settings.py and config.ini when compiling the mod
 """)
 
 
 def main(argv):
+    global _compile_with_get_dir
     global _compile_with_injector
     global _compile_with_settings
     try:
-        opts, args = getopt.getopt(argv, "his", [
+        opts, args = getopt.getopt(argv, "hdis", [
             'help',
+            'compile-dir',
             'compile-injector',
             'compile-settings',
         ])
@@ -138,10 +157,12 @@ def main(argv):
         if opt in ('-h', '--help'):
             show_help()
             sys.exit()
-        if opt in ('-i', '--compile-injector'):
+        elif opt in ('-i', '--compile-injector'):
             _compile_with_injector = True
-        if opt in ('-s', '--compile-settings'):
+        elif opt in ('-s', '--compile-settings'):
             _compile_with_settings = True
+        elif opt in ('-d', '--compile-dir'):
+            _compile_with_get_dir = True
     if not len(args):
         print('Insufficient arguments provided; at least one mod name must be specified')
         show_help()
