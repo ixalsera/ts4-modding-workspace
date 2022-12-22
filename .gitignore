@@ -167,3 +167,6 @@ Mods/*
 # Ignore the symlink because it has an absolute path which will always break
 Mods/**/injector.py
 Mods/**/settings.py
+
+# Ignore the config file
+**/config.ini
