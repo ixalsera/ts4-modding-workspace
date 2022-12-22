@@ -1,4 +1,9 @@
-import settings
+import configparser
+from os import path
+
+config = configparser.ConfigParser()
+config_file = path.realpath(__file__ + '/../../config.ini')
+config.read(config_file)
 
 green = '\033[33;1m'
 reset = '\033[0m'
