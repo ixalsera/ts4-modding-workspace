@@ -13,13 +13,15 @@ from server_commands.tuning_commands import get_managers
 from sims4.resources import ResourceLoader
 from sims4.tuning.instance_manager import TUNING_LOADED_CALLBACK, VERIFY_TUNING_CALLBACK
 from sims4.tuning.module_tuning import _ParseHandler, _EarlyExit
-from sims4.tuning.serialization import ETreeTuningLoader, ETreeClassCreator, _find_tunables_gen, LOAD_MODULE_FOR_EXPORTING, _scan_module_rec
+from sims4.tuning.serialization import ETreeTuningLoader, ETreeClassCreator, _find_tunables_gen, \
+    LOAD_MODULE_FOR_EXPORTING, _scan_module_rec
 from sims4.tuning.tunable_base import LoadingTags
 from sims4.utils import strformatter
-from settings import hotreload_folder
+from settings import hotreload_dir
 
 logger = sims4.log.Logger('XML Reloader', default_owner='thepancake1')
-reload_keys = {"interaction" : [sims4.resources.Key(0xE882D22F, 0x0000000000006A25, 0x00000000)]}
+reload_keys = {"interaction": [sims4.resources.Key(0xE882D22F, 0x0000000000006A25, 0x00000000)]}
+
 
 @sims4.commands.Command('r.xml')
 def tuning_reload(_connection=None):
@@ -36,7 +38,7 @@ def tuning_reload(_connection=None):
         else:
             sims4.commands.output('Reloaded: {}'.format(os.path.basename(file_name)), _connection)
             dependents.update(new_dependents)
-    
+
     for manager in get_managers().values():
         manager_name = manager.TYPE.name.lower()
         if manager_name in reload_keys:
@@ -49,6 +51,7 @@ def tuning_reload(_connection=None):
     sims4.commands.output('Reloading complete!', _connection)
     return True
 
+
 def get_module_name_from_tuning(key):
     loader = InjectorResourceLoader(key)
     tuning_file = loader.load()[0]
@@ -57,6 +60,7 @@ def get_module_name_from_tuning(key):
         xml.sax.parse(tuning_file, parse_handler)
     except _EarlyExit:
         return parse_handler.module_name
+
 
 def load_module_tuning(module, tuning_filename_or_key):
     schema_dict = {}
@@ -96,6 +100,7 @@ def load_module_tuning(module, tuning_filename_or_key):
                 setattr(parent, name, value)
     return True
 
+
 def load_from_xml(resource_key, resource_type, inst, from_reload=False):
     source = strformatter('Instance: {0} ({1}), {2}', resource_key.instance, inst.__name__, resource_type)
     tuning_loader = ETreeTuningLoader(inst, source, loading_tag=LoadingTags.Instance)
@@ -106,6 +111,7 @@ def load_from_xml(resource_key, resource_type, inst, from_reload=False):
     if tuning_file is not None:
         return tuning_loader.feed(tuning_file), file_name
     return (None, None)
+
 
 def create_class(resource_key, resource_type):
     try:
@@ -118,8 +124,10 @@ def create_class(resource_key, resource_type):
         tuning_loader.feed(tuning_file)
         return tuning_loader.module
     except Exception as e:
-        logger.error('Exception encountered while creating class instance for resource {} (type: {})...\n {}', resource_key, resource_type, e, owner='manus')
+        logger.error('Exception encountered while creating class instance for resource {} (type: {})...\n {}',
+                     resource_key, resource_type, e, owner='manus')
         return
+
 
 def reload_by_key(self, key):
     reload_dependencies = []
@@ -151,6 +159,7 @@ def reload_by_key(self, key):
         return False, False
     return reload_dependencies, file_name
 
+
 class InjectorResourceLoader(ResourceLoader):
     def cook(self, resource):
         resource = self.try_find_resource()
@@ -160,7 +169,7 @@ class InjectorResourceLoader(ResourceLoader):
         return io.BytesIO(bytes(open(resource, "rb").read())), resource
 
     def try_find_resource(self):
-        for file in glob.glob(os.path.join(hotreload_folder, "*.xml")):
+        for file in glob.glob(os.path.join(hotreload_dir, "*.xml")):
             t, i = self.resource_key.type, self.resource_key.instance
             truncated_instance = str(hex(i))[2:]
             truncated_type = str(hex(t))[2:]
