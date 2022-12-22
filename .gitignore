@@ -164,3 +164,6 @@ Mods/*
 !Mods/.gitkeep
 !Mods/hotreload
 !Mods/hello_world
+# Ignore the symlink because it has an absolute path which will always break
+Mods/**/injector.py
+Mods/**/settings.py
