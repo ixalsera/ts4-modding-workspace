@@ -16,24 +16,24 @@ This repository is designed to bootstrap your scripting process when making mods
     - `script_reloader.py`: hotreloads the specified `*.py` file (e.g., `r.script hello_world example_script`)
     - `settings.py`: this mod's symlink to `./Utilities/injector.py`
     - `xml_reloader.py`: hotreloads the `*.xml` file configured in `xml_reloader.py` (e.g., `r.xml`)
-- **Bash scripts** (to be run with `./Scripts` as the `cwd`):
-  - `compile.sh`: compiles the specified mod and puts the `*.ts4script` file in your Mods folder
-    - *Example:* `sh ./compile.sh hotreload`
-  - `decompile.sh`: decompiles The Sims 4 source code
-    - *Example:* `sh ./decompile.sh`
+- **~~Bash scripts~~**:
+  - The convenience scripts have been removed since we no longer require a Python symlink
 - **Utility scripts** (to be [symlinked](https://www.google.com/search?q=how+to+make+a+symlink) into your mod folders/files as needed):
   - `get_dir.py`: easily fetch the directory of your mod, helpful for working with files your mod might generate or use
   - `injector.py`: inject your scripts into pre-existing game code (learn how to use [here](https://modthesims.info/showthread.php?p=4751246#post4751246) and see `@inject_to` in `./Mods/hello_world/example_script.py` for reference)
 
 ## Instructions
 
-- Install the latest version of [miniconda](https://docs.conda.io/en/latest/miniconda.html#latest-miniconda-installer-links).
-Don't worry that it is bundled with the latest version of Python, we are specifically using `conda` to manage a virtual
-environment.
-- From the project root, run `conda  env create --file environment.yaml`. This will install the project dependencies as
-well as Python 3.7 in a virtual environment.
-- Edit `./Utilities/settings.py` to point to the corresponding folders on your computer.
-  - *Tip:* The included directories are from OSX, yours may vary!
+- Install the latest version of [miniconda](https://docs.conda.io/en/latest/miniconda.html#latest-miniconda-installer-links)
+if you haven't already. Don't worry that it is bundled with the latest version of Python, we are specifically using `conda`
+to manage a virtual environment.
+- If this is the first time setting up a project, run `conda  env create --file environment.yaml` from the project root.
+This will install the project dependencies as well as Python 3.7 in a virtual environment called `ts4_modding_workspace`.
+  - If you have already created the environment, you can activate the existing environment with `conda activate ts4_modding_workspace`.
+- Copy the `.env.dist` file to `.env` and adjust the values accordingly. Any that aren't necessary may be left blank and
+default values will be used.
+- Test your configuration with `python Utilities/validate_settings.py`. This will output your config or throw errors if
+there are issues.
 
 ## Notes
 
