@@ -2,6 +2,7 @@
 
 import os
 
+
 def get_dir():
     pathname = os.path.dirname(os.path.realpath(__file__))
     if pathname.lower().endswith('.ts4script'):
