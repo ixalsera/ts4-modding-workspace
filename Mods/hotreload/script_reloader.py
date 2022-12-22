@@ -13,7 +13,8 @@ import sims4.log
 import sys
 import linecache
 import os
-from settings import scripting_mods_folder
+from settings import interim_mods_dir
+
 
 @sims4.commands.Command('r.script', command_type=sims4.commands.CommandType.Live)
 def hot_reload(*args, _connection=None):
@@ -30,6 +31,7 @@ def hot_reload(*args, _connection=None):
         else:
             reload_file(module.__file__, mod, output)
 
+
 def reload_file(filename, mod, output):
     module = sims4.reload.get_module_for_filename(filename)
     reloaded_module = None
@@ -45,16 +47,17 @@ def reload_file(filename, mod, output):
     if reloaded_module is not None:
         return reloaded_module
 
+
 def _reload(module, filename, mod, output):
     modns = module.__dict__
     rest, file = os.path.split(module.__file__)
     file = file[:-1]
     code = None
     try:
-        code = compile(open(os.path.join(scripting_mods_folder, mod, file)).read(), mod, 'exec')
+        code = compile(open(os.path.join(interim_mods_dir, mod, file)).read(), mod, 'exec')
         output('Reloaded {}'.format(filename))
     except:
-        output('Exception encountered while reloading from {}'.format(scripting_mods_folder, mod, file))
+        output('Exception encountered while reloading from {}'.format(interim_mods_dir, mod, file))
     if code is not None:
         tmpns = modns.copy()
         modns.clear()
