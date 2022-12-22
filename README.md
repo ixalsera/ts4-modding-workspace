@@ -8,14 +8,14 @@
 
 This repository is designed to bootstrap your scripting process when making mods for The Sims 4. If you don't know where to start or can't seem to get your script files organized, check out this repository. It's designed as a boilerplate for you to customize for your own modding process. It provides the following:
 
-- **Utility mods** (to be compiled and used as neded):
+- **Utility mods** (to be compiled and used as needed):
   - `hello_world`: example mod
     - `example_script.py`: includes a `hello_world` command and an example injection with a notification
     - `injector.py`: this mod's symlink to `./Utilities/injector.py`
   - `hotreload`: includes commands for reloading your `*.py` and `*.xml` files without restarting the game
-    - `script_reloader.py`: hotreloads the specified `*.py` file (e.g., `r.script hello_world example_script`)
+    - `script_reloader.py`: hot-reloads the specified `*.py` file (e.g., `r.script hello_world example_script`)
     - `settings.py`: this mod's symlink to `./Utilities/injector.py`
-    - `xml_reloader.py`: hotreloads the `*.xml` file configured in `xml_reloader.py` (e.g., `r.xml`)
+    - `xml_reloader.py`: hot-reloads the `*.xml` file configured in `xml_reloader.py` (e.g., `r.xml`)
 - **~~Bash scripts~~**:
   - The convenience scripts have been removed since we no longer require a Python symlink
 - **Utility scripts** (to be [symlinked](https://www.google.com/search?q=how+to+make+a+symlink) into your mod folders/files as needed):
