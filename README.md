@@ -39,7 +39,9 @@ there are issues.
 
 - Don't use capital letters in mod folder or file names.
 - Have ideas for improving the workspace? Fork and submit a PR back to the repository!
-- Instead of duplicating your shared files, have one single source and [symlink](https://www.google.com/search?q=how+to+make+a+symlink) all references (e.g., `ln -s /path/to/original /path/to/link`)
+- Instead of duplicating your shared files, have one single source and [symlink](https://www.google.com/search?q=how+to+make+a+symlink)
+  all references (e.g., `ln -s /path/to/original /path/to/link` on *nix, `mklink path\to\link path\to\original` on Windows
+  (Command Prompt), `New-Item -ItemType SymbolicLink -Path "Link" -Target "Target"` on Windows (PowerShell))
 
 ## Acknowledgments
 

@@ -1,1 +1,1 @@
-../../Utilities/injector.py
+C:/Users/stuar/Code/ts4-modding-workspace/Utilities/injector.py
