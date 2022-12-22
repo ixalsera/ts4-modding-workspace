@@ -1,7 +1,8 @@
 import os
+import settings
 import sys
 from zipfile import PyZipFile, ZIP_STORED
-from settings import *
+
 
 def compile_module(creator_name, root, mods_folder):
     mod_name = creator_name + '_' + os.path.basename(root)
@@ -16,5 +17,6 @@ def compile_module(creator_name, root, mods_folder):
                 zf.write(os.path.join(root, file), str(os.path.basename(root) + '/' + file))
     zf.close()
 
-root = os.path.join(scripting_mods_folder, str(sys.argv[1]))
-compile_module(creator_name, root, mods_folder)
+
+root = os.path.join(settings.interim_mods_dir, str(sys.argv[1]))
+compile_module(settings.creator_name, root, settings.mods_dir)
