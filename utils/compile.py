@@ -47,7 +47,7 @@ def compile_module(creator, mod, mods_path):
 
 
 def include_injector(mod_path):
-    """ Copies the injector script in to the mod directory """
+    """ Copies the injector script in to the mod """
     global _helper_directory
 
     target = os.path.join(mod_path, 'injector.py')
@@ -57,7 +57,7 @@ def include_injector(mod_path):
 
 
 def include_get_dir(mod_path):
-    """ Copies the injector script in to the mod directory """
+    """ Copies the director fetcher script in to the mod """
     global _helper_directory
 
     target = os.path.join(mod_path, 'get_dir.py')
@@ -67,7 +67,7 @@ def include_get_dir(mod_path):
 
 
 def include_settings(mod_path):
-    """ Copies the settings script in to the mod directory
+    """ Copies the settings script in to the mod
 
     Since the game is unable to load non-Python files from the .ts4script,
     we need to inject our variables in to our settings script at compile time.
@@ -135,6 +135,17 @@ Options:
 -d|--compile-dir        Include the get_dir.py helper when compiling the mod
 -i|--compile-injector   Include the injector.py helper when compiling the mod
 -s|--compile-settings   Include the settings.py and config.ini when compiling the mod
+
+Examples:
+
+python utils/compile.py -i hello_world    - Will compile the hello_world mod with the XML injector
+
+python utils/compile.py -s hotreload      - Correctly compiles the hotreload utility mod, inserting
+                                            the settings.py file with configured values
+
+python utils/compile.py -dis example_mod  - Compiles example_mod from the configured mods folder,
+                                            inserting the XML Injector, settings config, and the
+                                            get_dir helper.     
 """)
 
 
@@ -168,6 +179,7 @@ def main(argv):
         show_help()
         sys.exit(2)
     if len(args) > 1:
+        print(args)
         print('Too many arguments provided; please specify only one mod name')
         show_help()
         sys.exit(2)
