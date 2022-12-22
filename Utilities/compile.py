@@ -15,8 +15,18 @@ def compile_module(creator, mod, mods_path):
     then compiles the scripts and resources in the mod's directory to a .ts4script
     archive, storing it in the user's Sims 4 Mods directory.
     """
+    # Grab our global variables
+    global _compile_with_injector
+    global _compile_with_settings
+
     mod_path = os.path.join(settings.interim_mods_dir, mod)
     fully_qualified_mod_name = creator + '_' + mod
+
+    if _compile_with_injector:
+        include_injector(mod_path)
+
+    if _compile_with_settings:
+        include_settings(mod_path)
 
     mod_folder_copy = os.path.join(mods_path, fully_qualified_mod_name + '.ts4script')
 
@@ -29,10 +39,23 @@ def compile_module(creator, mod, mods_path):
     zip_file.close()
 
 
+def include_injector(mod_path):
+    """ Symlinks the injector script in to the mod directory """
+    os.symlink(os.path.realpath(__file__ + '/../injector.py'), os.path.join(mod_path, 'injector.py'))
+
+
+def include_settings(mod_path):
+    """ Symlinks the settings script and configuration in to the mod directory """
+    os.symlink(os.path.realpath(__file__ + '/../settings.py'), os.path.join(mod_path, 'settings.py'))
+    os.symlink(os.path.realpath(__file__ + '/../config.ini'), os.path.join(mod_path, 'config.ini'))
+
+
 def show_help():
     """ Displays the help text for this script """
-    print(os.path.basename(__file__) + ' [-h|i|s] mod_name')
     print("""
+Usage:
+compile.py [-h|i|s] mod_name
+
 Compiling a module is as simple as running compile.py and providing the name of the mod to compile!
 
 To facilitate easier management of mods, since there are two helpers - injector.py and settings.py -
@@ -70,6 +93,10 @@ def main(argv):
             _compile_with_settings = True
     if not len(args):
         print('Insufficient arguments provided; at least one mod name must be specified')
+        show_help()
+        sys.exit(2)
+    if len(args) > 1:
+        print('Too many arguments provided; please specify only one mod name')
         show_help()
         sys.exit(2)
     for mod_name in args:
