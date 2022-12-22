@@ -2,7 +2,8 @@ from configparser import ConfigParser
 from os import path
 
 config = ConfigParser()
-config_file = path.realpath(__file__ + '/../config.ini')
+config_file = path.realpath(path.join(__file__, '..', 'config.ini'))
+print(config_file)
 config.read(config_file)
 
 green = '\033[33;1m'

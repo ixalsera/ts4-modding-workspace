@@ -61,7 +61,7 @@ def generate_config():
 
     config = ConfigParser()
     # Store the config file next to the scripts for easier linking
-    config_file = path.realpath(__file__ + '/../config.ini')
+    config_file = path.realpath(path.join(__file__, '..', 'config.ini'))
 
     # The user's mod creator name
     config['basic'] = {

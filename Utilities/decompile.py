@@ -2,7 +2,7 @@ import io
 import fnmatch
 import os
 import shutil
-import settings
+import config
 from zipfile import PyZipFile
 from unpyc3 import decompile
 
@@ -47,8 +47,8 @@ def decompile_dir(root_path):
                 print("FAIL: %s" % p)
 
 
-if not os.path.exists(settings.extracted_assets_dir):
-    os.mkdir(settings.extracted_assets_dir)
+if not os.path.exists(config.extracted_assets_dir):
+    os.mkdir(config.extracted_assets_dir)
 
-extract_folder(settings.data_dir, settings.extracted_assets_dir)
-extract_folder(settings.python_dir, settings.extracted_assets_dir)
+extract_folder(config.data_dir, config.extracted_assets_dir)
+extract_folder(config.python_dir, config.extracted_assets_dir)
