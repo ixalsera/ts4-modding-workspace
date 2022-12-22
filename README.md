@@ -32,6 +32,8 @@ This will install the project dependencies as well as Python 3.7 in a virtual en
   - If you have already created the environment, you can activate the existing environment with `conda activate ts4_modding_workspace`.
 - Copy the `.env.dist` file to `.env` and adjust the values accordingly. Any that aren't necessary may be left blank and
 default values will be used.
+- Generate a configuration file for use with scripts by running `python Utilities/generate_config.py`. This config file
+  will need to be re-generated if you make changes to any of the environment variables.
 - Test your configuration with `python Utilities/validate_settings.py`. This will output your config or throw errors if
 there are issues.
 
